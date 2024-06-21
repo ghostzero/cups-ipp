@@ -46,13 +46,8 @@ class Client implements ClientInterface
      */
     public function __construct(string $username = null, string $password = null, array $socketClientOptions = [])
     {
-        if (!is_null($username)) {
-            $this->username = $username;
-        }
-
-        if (!is_null($password)) {
-            $this->password = $password;
-        }
+        $this->username = $username;
+        $this->password = $password;
 
         if (empty($socketClientOptions['remote_socket'])) {
             $socketClientOptions['remote_socket'] = self::SOCKET_URL;
