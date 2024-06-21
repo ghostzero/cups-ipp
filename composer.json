@@ -14,7 +14,7 @@
         "php-http/socket-client": "^2.1",
         "php-http/client-common": "^2.5",
         "guzzlehttp/psr7": "^2.4",
-        "symfony/yaml": "^6.1"
+        "symfony/yaml": "^6.1|^7.1"
     },
     "require-dev": {
         "symfony/error-handler": "*",
