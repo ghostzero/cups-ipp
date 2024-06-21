@@ -2,16 +2,17 @@
 
 namespace Smalot\Cups\Transport;
 
+use GuzzleHttp\Psr7\HttpFactory;
 use GuzzleHttp\Psr7\Uri;
 use Http\Client\Common\Plugin\AddHostPlugin;
 use Http\Client\Common\Plugin\ContentLengthPlugin;
 use Http\Client\Common\Plugin\DecoderPlugin;
 use Http\Client\Common\Plugin\ErrorPlugin;
 use Http\Client\Common\PluginClient;
-use Http\Client\HttpClient;
 use Http\Client\Socket\Client as SocketHttpClient;
-use Http\Message\MessageFactory\GuzzleMessageFactory;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Smalot\Cups\CupsException;
 
 /**
@@ -19,7 +20,7 @@ use Smalot\Cups\CupsException;
  *
  * @package Smalot\Cups\Transport
  */
-class Client implements HttpClient
+class Client implements ClientInterface
 {
 
     const SOCKET_URL = 'unix:///var/run/cups/cups.sock';
@@ -28,34 +29,22 @@ class Client implements HttpClient
 
     const AUTHTYPE_DIGEST = 'digest';
 
-    /**
-     * @var HttpClient
-     */
-    protected $httpClient;
+    protected ClientInterface $httpClient;
 
-    /**
-     * @var string
-     */
-    protected $authType;
+    protected string $authType;
 
-    /**
-     * @var string
-     */
-    protected $username;
+    protected string $username;
 
-    /**
-     * @var string
-     */
-    protected $password;
+    protected string $password;
 
     /**
      * Client constructor.
      *
-     * @param string $username
-     * @param string $password
+     * @param string|null $username
+     * @param string|null $password
      * @param array $socketClientOptions
      */
-    public function __construct($username = null, $password = null, $socketClientOptions = [])
+    public function __construct(string $username = null, string $password = null, array $socketClientOptions = [])
     {
         if (!is_null($username)) {
             $this->username = $username;
@@ -69,7 +58,7 @@ class Client implements HttpClient
             $socketClientOptions['remote_socket'] = self::SOCKET_URL;
         }
 
-        $messageFactory = new GuzzleMessageFactory();
+        $messageFactory = new HttpFactory();
         $socketClient = new SocketHttpClient($messageFactory, $socketClientOptions);
         $host = preg_match(
           '/unix:\/\//',
@@ -87,13 +76,7 @@ class Client implements HttpClient
         $this->authType = self::AUTHTYPE_BASIC;
     }
 
-    /**
-     * @param string $username
-     * @param string $password
-     *
-     * @return $this
-     */
-    public function setAuthentication($username, $password)
+    public function setAuthentication(string $username, string $password): static
     {
         $this->username = $username;
         $this->password = $password;
@@ -101,12 +84,7 @@ class Client implements HttpClient
         return $this;
     }
 
-    /**
-     * @param string $authType
-     *
-     * @return $this
-     */
-    public function setAuthType($authType)
+    public function setAuthType(string $authType): static
     {
         $this->authType = $authType;
 
@@ -116,7 +94,7 @@ class Client implements HttpClient
     /**
      * (@inheritdoc}
      */
-    public function sendRequest(RequestInterface $request)
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         if ($this->username || $this->password) {
             switch ($this->authType) {

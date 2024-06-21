@@ -10,15 +10,14 @@
         }
     ],
     "require": {
-        "php": ">=5.6",
-        "php-http/socket-client": "*",
-        "php-http/client-common": "*",
-        "php-http/message": "*",
-        "guzzlehttp/psr7": "*",
-        "symfony/yaml": "*"
+        "php": "^8.2",
+        "php-http/socket-client": "^2.1",
+        "php-http/client-common": "^2.5",
+        "guzzlehttp/psr7": "^2.4",
+        "symfony/yaml": "^6.1"
     },
     "require-dev": {
-        "symfony/debug": "*",
+        "symfony/error-handler": "*",
         "atoum/atoum": "*"
     },
     "minimum-stability": "dev",
