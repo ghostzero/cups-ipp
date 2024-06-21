@@ -33,9 +33,9 @@ class Client implements ClientInterface
 
     protected string $authType;
 
-    protected string $username;
+    protected ?string $username;
 
-    protected string $password;
+    protected ?string $password;
 
     /**
      * Client constructor.
