@@ -3,8 +3,11 @@
 namespace Smalot\Cups\Manager;
 
 use Http\Client\HttpClient;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Smalot\Cups\Builder\Builder;
+use Smalot\Cups\CupsException;
+use Smalot\Cups\Transport\Response;
 use Smalot\Cups\Transport\ResponseParser;
 
 /**
@@ -20,34 +23,18 @@ class ManagerAbstract
     use Traits\OperationIdAware;
     use Traits\UsernameAware;
 
-    /**
-     * @var \Http\Client\HttpClient
-     */
-    protected $client;
+    protected ClientInterface $client;
 
-    /**
-     * @var \Smalot\Cups\Builder\Builder
-     */
-    protected $builder;
+    protected Builder $builder;
 
-    /**
-     * @var \Smalot\Cups\Transport\ResponseParser
-     */
-    protected $responseParser;
+    protected ResponseParser $responseParser;
 
-    /**
-     * @var string
-     */
-    protected $version;
+    protected string $version;
 
     /**
      * ManagerAbstract constructor.
-     *
-     * @param \Smalot\Cups\Builder\Builder $builder
-     * @param \Http\Client\HttpClient $client
-     * @param \Smalot\Cups\Transport\ResponseParser $responseParser
      */
-    public function __construct(Builder $builder, HttpClient $client, ResponseParser $responseParser)
+    public function __construct(Builder $builder, ClientInterface $client, ResponseParser $responseParser)
     {
         $this->client = $client;
         $this->builder = $builder;
@@ -61,41 +48,24 @@ class ManagerAbstract
     }
 
     /**
-     * @param string $name
-     * @param mixed $value
-     * @param bool $emptyIfMissing
-     *
-     * @return string
+     * @throws CupsException
      */
-    public function buildProperty($name, $value, $emptyIfMissing = false)
+    public function buildProperty(string $name, mixed $value, bool $emptyIfMissing = false): string
     {
         return $this->builder->buildProperty($name, $value, $emptyIfMissing);
     }
 
-    /**
-     * @param array $properties
-     *
-     * @return string
-     */
-    public function buildProperties($properties = [])
+    public function buildProperties(array $properties = []): string
     {
         return $this->builder->buildProperties($properties);
     }
 
-    /**
-     * @param \Psr\Http\Message\ResponseInterface $response
-     *
-     * @return \Smalot\Cups\Transport\Response
-     */
-    public function parseResponse(ResponseInterface $response)
+    public function parseResponse(ResponseInterface $response): Response
     {
         return $this->responseParser->parse($response);
     }
 
-    /**
-     * @return string
-     */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->version;
     }

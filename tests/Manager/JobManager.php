@@ -61,7 +61,6 @@ class JobManager extends atoum\test
         $printerUri = 'ipp://localhost:631/printers/PDF';
 
         $builder = new Builder();
-        /** @var Client $client */
         $client = new Client();
         $client->setAuthentication($user, $password);
         $responseParser = new ResponseParser();
